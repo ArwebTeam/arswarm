@@ -67,7 +67,8 @@ module.exports = async ({ }) => {
       throw new Error('TX not found')
     },
     getKVTags: async (key, value) => {
-      return db.getFromIndex('tags', 'kvTags', [key, value])
+      const res = await db.getAllFromIndex('tags', 'kvTags', [key, value])
+      return res.map(r => r.tx)
     },
     batchAdd: async (txs) => {
       await Promise.all(txs.map(C.add))
@@ -75,5 +76,7 @@ module.exports = async ({ }) => {
     db
   }
 
-  C.arql = ARQL(C)
+  C.arql = await ARQL(C)
+
+  return C
 }

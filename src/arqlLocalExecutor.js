@@ -21,7 +21,7 @@ module.exports = (cache) => {
       return t1
     },
     equals: async (expr1, expr2) => { // TODO: convert params to encoded format
-      return cache.getKVTX(expr1, expr2)
+      return cache.getKVTags(expr1, expr2)
     }
   }
 
