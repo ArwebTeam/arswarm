@@ -3,6 +3,8 @@
 const Transaction = require('arweave/web/lib/transaction').default
 const DB = require('./storage')
 
+const ARQL = require('./arqlLocalExecutor')
+
 module.exports = async ({ }) => {
   const txCache = new Set()
   const db = await DB()
@@ -19,6 +21,7 @@ module.exports = async ({ }) => {
 
       const tx = new Transaction(data)
 
+      // TODO: rework to use secondary index
       await Promise.all(tx.get('tags').map(async (tag) => {
         let key = tag.get('name', {decode: false, string: true})
         let value = tag.get('value', {decode: false, string: true})
@@ -64,9 +67,15 @@ module.exports = async ({ }) => {
 
       throw new Error('TX not found')
     },
+    getKVTags: async (kv) => {
+      // TODO: rework to use secondary index
+      return await db.get('kvTags', kv)
+    },
     batchAdd: async (txs) => {
       await Promise.all(txs.map(C.add))
     },
     db
   }
+
+  C.arql = ARQL(C)
 }
