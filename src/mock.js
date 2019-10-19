@@ -11,6 +11,9 @@ module.exports = async (config) => {
     },
     publish: async (tx) => {
       return cache.add(tx)
+    },
+    fetch: async (id) => {
+      return cache.get(id)
     }
   }
 }
