@@ -1,8 +1,6 @@
 'use strict'
 
-module.exports = ({id, libp2p, storage}) => {
-  // create arswarm swarm with id $id
-
+module.exports = ({storage}) => {
   return {
     arql: async (query) => {
 
