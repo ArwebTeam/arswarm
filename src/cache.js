@@ -6,7 +6,7 @@ const DB = require('./storage')
 const ARQL = require('./arqlLocalExecutor')
 
 module.exports = async ({ }) => {
-  const txCache = new Set()
+  const txCache = new Map()
   const db = await DB()
 
   const C = {
@@ -26,7 +26,7 @@ module.exports = async ({ }) => {
         let key = tag.get('name')
         let value = tag.get('value')
 
-        dbtx.store.put('tags', {key, value, tx: data.id, kv: `${data.id}#${key}#${value}`})
+        dbtx.store.put({key, value, tx: data.id, kv: `${data.id}#${key}#${value}`})
       })
       await dbtx.done
 
@@ -46,7 +46,7 @@ module.exports = async ({ }) => {
         let key = tag.get('name')
         let value = tag.get('value')
 
-        dbtx.delete('tags', `${id}#${key}#${value}`)
+        dbtx.delete(`${id}#${key}#${value}`)
       })
       await dbtx.done
 

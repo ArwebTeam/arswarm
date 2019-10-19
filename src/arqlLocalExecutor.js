@@ -1,5 +1,7 @@
 'use strict'
 
+const ArweaveUtils = require('arweave/web/lib/utils')
+
 module.exports = (cache) => {
   const fncs = {
     and: async (expr1, expr2) => {
@@ -20,8 +22,8 @@ module.exports = (cache) => {
 
       return t1
     },
-    equals: async (expr1, expr2) => { // TODO: convert params to encoded format
-      return cache.getKVTags(expr1, expr2)
+    equals: async (expr1, expr2) => {
+      return cache.getKVTags(ArweaveUtils.stringToB64Url(expr1), ArweaveUtils.stringToB64Url(expr2))
     }
   }
 
