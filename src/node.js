@@ -1,12 +1,11 @@
 'use strict'
 
 const Libp2p = require('libp2p')
-const TCP = require('libp2p-tcp')
+
 const WS = require('libp2p-websockets')
 const SPDY = require('libp2p-spdy')
 const MPLEX = require('libp2p-mplex')
 const SECIO = require('libp2p-secio')
-const MulticastDNS = require('libp2p-mdns')
 const DHT = require('libp2p-kad-dht')
 const GossipSub = require('libp2p-gossipsub')
 const defaultsDeep = require('@nodeutils/defaults-deep')
@@ -15,18 +14,19 @@ const DelegatedPeerRouter = require('libp2p-delegated-peer-routing')
 const DelegatedContentRouter = require('libp2p-delegated-content-routing')
 
 class Node extends Libp2p {
+  // TODO: add nodetrust
   constructor (_options) {
     const peerInfo = _options.peerInfo
     const defaults = {
       // The libp2p modules for this libp2p bundle
       modules: {
         transport: [
-          TCP,
-          new WS() // It can take instances too!
+          WS
         ],
         streamMuxer: [
-          SPDY,
-          MPLEX
+          // TODO: consider µPlex since it uses no chunking (which would be done by WS)
+          MPLEX,
+          SPDY
         ],
         connEncryption: [
           SECIO
@@ -42,7 +42,7 @@ class Node extends Libp2p {
         //   new DelegatedPeerRouter()
         // ],
         peerDiscovery: [
-          MulticastDNS
+
         ],
         dht: DHT, // DHT enables PeerRouting, ContentRouting and DHT itself components
         pubsub: GossipSub
@@ -51,15 +51,15 @@ class Node extends Libp2p {
       // libp2p config options (typically found on a config.json)
       config: { // The config object is the part of the config that can go into a file, config.json.
         peerDiscovery: {
-          autoDial: true, // Auto connect to discovered peers (limited by ConnectionManager minPeers)
-          mdns: { // mdns options
+          autoDial: true // Auto connect to discovered peers (limited by ConnectionManager minPeers)
+          /* mdns: { // mdns options
             interval: 1000, // ms
             enabled: true
           },
           webrtcStar: { // webrtc-star options
             interval: 1000, // ms
             enabled: false
-          }
+          } */
           // .. other discovery module options.
         },
         relay: { // Circuit Relay options

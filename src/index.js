@@ -1,6 +1,5 @@
 'use strict'
 
-const Storage = require('./storage')
 const Swarm = require('./swarm')
 const Cache = require('./cache')
 const Cloud = require('./cloud')
