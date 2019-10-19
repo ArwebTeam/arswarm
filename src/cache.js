@@ -13,40 +13,60 @@ module.exports = async ({ }) => {
         return
       }
 
-      if (db.get('txs', data.id)) {
+      if (await db.get('txs', data.id)) {
         return
       }
 
       const tx = new Transaction(data)
-      tx.get('tags').forEach(tag => {
-        let key = tag.get('name', {decode: true, string: true})
-        let value = tag.get('value', {decode: true, string: true})
-        console.log(`${key} : ${value}`)
-      })
-      txCache.set(data.id, data)
+
+      await Promise.all(tx.get('tags').map(async (tag) => {
+        let key = tag.get('name', {decode: false, string: true})
+        let value = tag.get('value', {decode: false, string: true})
+
+        await db.put('kvTags', {kv: `${key}#${value}`, tx: data.id})
+        await db.put('tag2tx', {key, value, tx: data.id})
+        await db.put('value2tx', {key, value, tx: data.id})
+      }))
+
+      txCache.set(data.id, tx)
+      await db.put('txs', data)
     },
     del: async (id) => {
-      if (txCache.has(id)) {
+      if (!txCache.has(id)) {
         return
       }
 
+      const tx = txCache.get(id)
       txCache.delete(id)
-      await storage.delTX(id)
+
+      await Promise.all(tx.get('tags').map(async (tag) => {
+        let key = tag.get('name', {decode: false, string: true})
+        let value = tag.get('value', {decode: false, string: true})
+
+        await db.delete('kvTags', `${key}#${value}`)
+        await db.delete('tag2tx', key)
+        await db.delete('value2tx', value)
+      }))
+
+      await db.delete('txs', tx.id)
     },
     get: async (id) => {
       if (txCache.has(id)) {
         return txCache.get(id)
       }
 
-      if (await storage.hasTX(id)) {
-        const data = await storage.getTX(id)
+      let data
+      if ((data = await db.get('txs', id))) {
         const tx = new Transaction(data)
         txCache.set(id, tx)
         return tx
       }
 
       throw new Error('TX not found')
-    }
-
+    },
+    batchAdd: async (txs) => {
+      await Promise.all(txs.map(C.add))
+    },
+    db
   }
 }
