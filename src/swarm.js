@@ -2,6 +2,6 @@
 
 const Node = require('./node')
 
-module.exports = ({ id, libp2p }) => {
+module.exports = ({ id, libp2p }, storage) => {
 
 }

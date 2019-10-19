@@ -1,14 +1,17 @@
 'use strict'
 
-module.exports = ({id, libp2p, storage}) => {
-  // create arswarm swarm with id $id
+const Storage = require('./storage')
+const Swarm = require('./swarm')
+const Cache = require('./cache')
+const Cloud = require('./cloud')
 
-  return {
-    arql: async (query) => {
+module.exports = async (config) => {
+  const storage = await Storage(config.storage)
 
-    },
-    publish: async (tx) => {
+  const swarm = await Swarm(config.swarm, storage)
+  const cache = await Cache(config.cache, storage)
 
-    }
-  }
+  const cloud = await Cloud(swarm, cache)
+
+  return cloud
 }
