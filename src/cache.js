@@ -23,12 +23,10 @@ module.exports = async ({ }) => {
 
       // TODO: rework to use secondary index
       await Promise.all(tx.get('tags').map(async (tag) => {
-        let key = tag.get('name', {decode: false, string: true})
-        let value = tag.get('value', {decode: false, string: true})
+        let key = tag.get('name')
+        let value = tag.get('value')
 
-        await db.put('kvTags', {kv: `${key}#${value}`, tx: data.id})
-        await db.put('tag2tx', {key, value, tx: data.id})
-        await db.put('value2tx', {key, value, tx: data.id})
+        await db.put('tags', {key, value, tx: data.id, kv: `${data.id}#${key}#${value}`})
       }))
 
       txCache.set(data.id, tx)
@@ -43,12 +41,10 @@ module.exports = async ({ }) => {
       txCache.delete(id)
 
       await Promise.all(tx.get('tags').map(async (tag) => {
-        let key = tag.get('name', {decode: false, string: true})
-        let value = tag.get('value', {decode: false, string: true})
+        let key = tag.get('name')
+        let value = tag.get('value')
 
-        await db.delete('kvTags', `${key}#${value}`)
-        await db.delete('tag2tx', key)
-        await db.delete('value2tx', value)
+        await db.delete('tags', `${id}#${key}#${value}`)
       }))
 
       await db.delete('txs', tx.id)
@@ -67,9 +63,8 @@ module.exports = async ({ }) => {
 
       throw new Error('TX not found')
     },
-    getKVTags: async (kv) => {
-      // TODO: rework to use secondary index
-      return await db.get('kvTags', kv)
+    getKVTags: async (key, value) => {
+      return db.getFromIndex('tags', 'kvTags', [key, value])
     },
     batchAdd: async (txs) => {
       await Promise.all(txs.map(C.add))

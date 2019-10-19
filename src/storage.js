@@ -8,15 +8,12 @@ module.exports = async () => {
       db.createObjectStore('txs', {
         keyPath: 'id'
       })
-      db.createObjectStore('kvTags', { // {kv: '<tag>#<value>', tx: '<id>'}
+      const store = db.createObjectStore('tags', { // {key, value, tx, kv}
         keyPath: 'kv'
       })
-      db.createObjectStore('tag2tx', { // {tag: '<tag>', value: '<value>', tx: '<id>'}
-        keyPath: 'tag'
-      })
-      db.createObjectStore('value2tx', { // {tag: '<tag>', value: '<value>', tx: '<id>'}
-        keyPath: 'value'
-      })
+      store.createIndex('kvTags', ['key', 'value'])
+      store.createIndex('key', 'key')
+      store.createIndex('value', 'value')
     },
     blocked () {
       // …
