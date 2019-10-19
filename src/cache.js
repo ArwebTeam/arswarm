@@ -21,13 +21,14 @@ module.exports = async ({ }) => {
 
       const tx = new Transaction(data)
 
-      // TODO: rework to use secondary index
-      await Promise.all(tx.get('tags').map(async (tag) => {
+      const dbtx = db.transaction('tags', 'readwrite')
+      tx.get('tags').forEach((tag) => {
         let key = tag.get('name')
         let value = tag.get('value')
 
-        await db.put('tags', {key, value, tx: data.id, kv: `${data.id}#${key}#${value}`})
-      }))
+        dbtx.store.put('tags', {key, value, tx: data.id, kv: `${data.id}#${key}#${value}`})
+      })
+      await dbtx.done
 
       txCache.set(data.id, tx)
       await db.put('txs', data)
@@ -40,12 +41,14 @@ module.exports = async ({ }) => {
       const tx = txCache.get(id)
       txCache.delete(id)
 
-      await Promise.all(tx.get('tags').map(async (tag) => {
+      const dbtx = db.transaction('tags', 'readwrite')
+      tx.get('tags').forEach((tag) => {
         let key = tag.get('name')
         let value = tag.get('value')
 
-        await db.delete('tags', `${id}#${key}#${value}`)
-      }))
+        dbtx.delete('tags', `${id}#${key}#${value}`)
+      })
+      await dbtx.done
 
       await db.delete('txs', tx.id)
     },
