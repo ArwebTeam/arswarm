@@ -2,6 +2,17 @@
 
 const Node = require('./node')
 
-module.exports = ({ id, libp2p }, storage) => {
+const { verifyTX } = require('./tx')
 
+module.exports = async (conf, cache) => {
+  const node = await Node(conf, cache)
+
+  return {
+    searchForNewTransactions: async (query) => {
+
+    },
+    publishTransaction: async (query) => {
+
+    }
+  }
 }

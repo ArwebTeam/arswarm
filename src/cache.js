@@ -23,10 +23,10 @@ module.exports = async ({ }) => {
 
       const dbtx = db.transaction('tags', 'readwrite')
       tx.get('tags').forEach((tag) => {
-        let key = tag.get('name')
-        let value = tag.get('value')
+        const key = tag.get('name')
+        const value = tag.get('value')
 
-        dbtx.store.put({key, value, tx: data.id, kv: `${data.id}#${key}#${value}`})
+        dbtx.store.put({ key, value, tx: data.id, kv: `${data.id}#${key}#${value}` })
       })
       await dbtx.done
 
@@ -43,8 +43,8 @@ module.exports = async ({ }) => {
 
       const dbtx = db.transaction('tags', 'readwrite')
       tx.get('tags').forEach((tag) => {
-        let key = tag.get('name')
-        let value = tag.get('value')
+        const key = tag.get('name')
+        const value = tag.get('value')
 
         dbtx.delete(`${id}#${key}#${value}`)
       })
