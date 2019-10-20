@@ -133,7 +133,8 @@ module.exports = async ({ listen, id, bootstrap }, cache) => {
       }
     }
   })
-  await node.start()
+
+  await node.start() // TODO: possibly move this somewhere else, so it doesn't crash the SW if it fails
 
   return node
 }

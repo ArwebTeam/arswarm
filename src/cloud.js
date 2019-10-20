@@ -3,7 +3,7 @@
 module.exports = (swarm, cache) => {
   return {
     arql: async (query) => {
-      const newTXs = await swarm.serachForTransactions(query)
+      const newTXs = await swarm.searchForNewTransactions(query)
       await cache.batchAdd(newTXs)
       return cache.arql(query)
     },
