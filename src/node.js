@@ -2,6 +2,7 @@
 
 const Id = require('peer-id')
 const prom = (f) => new Promise((resolve, reject) => f((err, res) => err ? reject(err) : resolve(res)))
+const multiaddr = require('multiaddr')
 
 const Libp2p = require('libp2p')
 const PeerInfo = require('peer-info')
@@ -30,7 +31,7 @@ class Node extends Libp2p {
   constructor (_options) {
     const peerInfo = _options.peerInfo
 
-    const stardust = new STARDUST({ id: peerInfo.id })
+    const stardust = new STARDUST({ id: peerInfo.id, softFail: true })
 
     const defaults = {
       // The libp2p modules for this libp2p bundle
@@ -97,6 +98,7 @@ class Node extends Libp2p {
         pubsub: {
           enabled: true,
           emitSelf: true, // whether the node should emit to self on publish, in the event of the topic being subscribed
+          // TODO: consider if we need this
           signMessages: true, // if messages should be signed
           strictSigning: true // if message signing should be required
         }
@@ -110,18 +112,18 @@ class Node extends Libp2p {
 
 module.exports = async ({ listen, id, bootstrap }, cache) => {
   if (!id) {
-    id = await cache.db.kv.get('id')
+    id = await cache.kv.get('id')
   }
 
   if (!id) {
     id = await prom(cb => Id.create({ keyType: 'rsa', bits: 2048 }, cb))
-    await cache.db.kv.set('id', id.toJSON())
+    await cache.kv.set('id', id.toJSON())
   } else {
     id = await prom(cb => Id.createFromJSON(id, cb))
   }
 
   const peerInfo = new PeerInfo(id)
-  listen.forEach(addr => peerInfo.multiaddrs.add(addr))
+  listen.forEach(addr => peerInfo.multiaddrs.add(multiaddr(addr).encapsulate('/p2p/' + id.toB58String())))
 
   const node = new Node({
     peerInfo,
@@ -134,7 +136,7 @@ module.exports = async ({ listen, id, bootstrap }, cache) => {
     }
   })
 
-  await node.start() // TODO: possibly move this somewhere else, so it doesn't crash the SW if it fails
+  await prom(cb => node.start(cb)) // TODO: possibly move this somewhere else, so it doesn't crash the SW if it fails
 
   return node
 }

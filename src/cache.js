@@ -34,7 +34,7 @@ module.exports = async ({ }) => {
       await db.put('txs', data)
     },
     del: async (id) => {
-      if (!txCache.has(id)) {
+      if (!txCache.has(id) && !(await db.get('txs', id))) {
         return
       }
 
@@ -73,7 +73,7 @@ module.exports = async ({ }) => {
     batchAdd: async (txs) => {
       await Promise.all(txs.map(C.add))
     },
-    db
+    kv: db.kv
   }
 
   C.arql = await ARQL(C)

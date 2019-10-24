@@ -22,6 +22,8 @@ module.exports = (swarm, cache) => {
       }
 
       throw new Error('TX_NOT_FOUND') // TODO: make this an arweave error
-    }
+    },
+    _swarm: swarm,
+    _cache: cache
   }
 }

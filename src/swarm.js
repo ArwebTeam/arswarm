@@ -28,6 +28,7 @@ module.exports = async (conf, cache) => {
     },
     fetch: async (id) => {
 
-    }
+    },
+    _node: node
   }
 }
