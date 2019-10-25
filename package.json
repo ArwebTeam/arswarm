@@ -16,7 +16,7 @@
   "license": "MPL-2.0",
   "dependencies": {
     "@nodeutils/defaults-deep": "^1.1.0",
-    "arweave": "^1.4.1",
+    "arweave": "^1.5.3",
     "idb": "^4.0.5",
     "idb-shared-kv": "^0.1.0",
     "libp2p": "^0.26.2",
@@ -29,7 +29,7 @@
     "libp2p-pnet": "^0.1.0",
     "libp2p-secio": "^0.11.1",
     "libp2p-spdy": "^0.13.3",
-    "libp2p-stardust": "libp2p/js-libp2p-stardust#feat/polish",
+    "libp2p-stardust": "^0.1.0",
     "libp2p-websockets": "^0.12.4",
     "peer-id": "^0.12.5",
     "uplex": "^0.0.4"
