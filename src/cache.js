@@ -10,6 +10,10 @@ module.exports = async ({ }) => {
   const db = await DB()
 
   const C = {
+    addLocal: async (data) => {
+      data.isLocal = true
+      return C.add(data)
+    },
     add: async (data) => {
       if (txCache.has(data.id)) {
         return
