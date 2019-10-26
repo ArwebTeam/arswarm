@@ -19,16 +19,37 @@ module.exports = async (conf, cache) => {
   ))
 
   return {
-    searchForNewTransactions: async (query) => {
-      return []
-    },
-    publishTransaction: async (txData) => {
-      const encoded = await encodeTX(txData)
-      await prom(cb => node.pubsub.publish('arswarm', encoded, cb))
-    },
-    fetch: async (id) => {
+    tx: {
+      searchARQL: async (query) => {
+        return []
+      },
+      publish: async (txData) => {
+        /* const encoded = await encodeTX(txData)
+        await prom(cb => node.pubsub.publish('arswarm', encoded, cb)) */
+      },
+      fetch: async (id) => {
 
+      }
     },
-    _node: node
+    node: {
+      peer: () => {
+        return {
+          id: node.peerInfo.id.toB58String(),
+          addrs: node.peerInfo.multiaddrs.toArray().map(String)
+        }
+      },
+      peers: (connected) => {
+        const peers = node.peerBook.getAllArray().map((p) => p.isConnected() || !connected)
+
+        return peers.map(p => ({
+          id: p.id.toB58String(),
+          addr: p.multiaddrs.toArray().map(String)
+        }))
+      },
+      connect: async (addr) => {
+
+      }
+    },
+    _libp2p: node
   }
 }
