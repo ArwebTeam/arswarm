@@ -1,6 +1,6 @@
 {
   "name": "arswarm",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Arswarm is a transaction and change caching/broadcasting layer",
   "main": "src/index.js",
   "scripts": {
