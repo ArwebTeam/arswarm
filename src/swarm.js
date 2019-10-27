@@ -24,6 +24,7 @@ module.exports = async (conf, cache) => {
         return []
       },
       publish: async (txData) => {
+        // TODO: auto re-publish if no peers were online
         /* const encoded = await encodeTX(txData)
         await prom(cb => node.pubsub.publish('arswarm', encoded, cb)) */
       },
@@ -39,11 +40,11 @@ module.exports = async (conf, cache) => {
         }
       },
       peers: (connected) => {
-        const peers = node.peerBook.getAllArray().map((p) => p.isConnected() || !connected)
+        const peers = node.peerBook.getAllArray().filter((p) => p.isConnected() || !connected)
 
         return peers.map(p => ({
           id: p.id.toB58String(),
-          addr: p.multiaddrs.toArray().map(String)
+          addrs: p.multiaddrs.toArray().map(String)
         }))
       },
       connect: async (addr) => {
