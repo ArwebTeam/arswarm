@@ -25,6 +25,7 @@
     "libp2p-delegated-peer-routing": "^0.3.1",
     "libp2p-gossipsub": "^0.0.5",
     "libp2p-kad-dht": "^0.16.0",
+    "libp2p-mesh-rpc": "^0.1.2",
     "libp2p-mplex": "^0.8.5",
     "libp2p-pnet": "^0.1.0",
     "libp2p-secio": "^0.11.1",
