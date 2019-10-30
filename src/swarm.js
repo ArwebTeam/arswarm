@@ -5,10 +5,9 @@
 const Node = require('./node')
 const prom = (f) => new Promise((resolve, reject) => f((err, res) => err ? reject(err) : resolve(res)))
 
-const { verifyTX } = require('./tx')
 const { ARQLReq, ARQLRes, FetchReq, FetchRes, TX } = require('./proto')
 const meshRPC = require('libp2p-mesh-rpc')
-const Arweave = require('arweave')
+const Arweave = require('arweave/web').default
 
 function encQ (q) {
   const o = { op: q.op }
@@ -53,6 +52,7 @@ module.exports = async (conf, cache) => {
   const mesh = await meshRPC({
     swarm: node,
     protocol: '/arswarm/1.0.0',
+    config: { },
     cmds: {
       arql: {
         errors: {
