@@ -127,7 +127,7 @@ module.exports = async (conf, cache) => {
         // TODO: also move search from cloud to swarm so we can re-use ids
         return (await mesh.cmd.arql.multicast({ successMax: 4, parallel: 5 }, query)) // this also validates. it returns TX[]
           .filter(r => r.isRes)
-          .reduce((a, b) => a.concat(b.filter(b => a.indexOf(b) === -1))) // concat all results
+          .reduce((a, b) => a.concat(b.filter(b => a.indexOf(b) === -1)), []) // concat all results
       },
       publish: async (txData) => {
         // TODO: auto re-publish if no peers were online
