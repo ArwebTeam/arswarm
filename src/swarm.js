@@ -7,7 +7,7 @@ const prom = (f) => new Promise((resolve, reject) => f((err, res) => err ? rejec
 
 const { ARQLReq, ARQLRes, FetchReq, FetchRes, TX } = require('./proto')
 const meshRPC = require('libp2p-mesh-rpc')
-const Arweave = require('arweave/web').default
+const { encode, decodeAndValidate, decodeRawAndValidate } = require('./tx')(TX)
 
 function encQ (q) {
   const o = { op: q.op }
@@ -46,8 +46,6 @@ function decQ (q) {
 }
 
 module.exports = async (conf, cache) => {
-  const arweave = Arweave.init({})
-
   const node = await Node(conf, cache)
   const mesh = await meshRPC({
     swarm: node,
@@ -67,9 +65,7 @@ module.exports = async (conf, cache) => {
             const res = await send({ query: encQ(query) })
 
             for (let i = 0; i < res.txs.length; i++) {
-              if (!await arweave.transactions.verify(arweave.transactions.fromRaw(res.txs[i]))) {
-                throw new Error('SIG NOK')
-              }
+              res.txs[i] = await decodeRawAndValidate(res.txs[i])
             }
 
             return res.txs
@@ -92,10 +88,7 @@ module.exports = async (conf, cache) => {
           async client (peer, send, id) {
             const res = await send({ id })
 
-            if (!await arweave.transactions.verify(arweave.transactions.fromRaw(res.tx))) {
-              throw new Error('SIG NOK')
-            }
-            return res.tx
+            return await decodeRawAndValidate(res.tx)
           },
           async server (peer, { id }) {
             try {
@@ -121,10 +114,7 @@ module.exports = async (conf, cache) => {
   await prom(cb => node.pubsub.subscribe(
     'arswarm', // IDEA: possibly split up networks by app-id
     async (msg) => {
-      const txData = await TX.decode(msg.data)
-      if (!await arweave.transactions.verify(arweave.transactions.fromRaw(txData))) {
-        return
-      }
+      const txData = await decodeAndValidate(msg.data)
       await cache.add(txData)
     },
     cb
@@ -141,8 +131,7 @@ module.exports = async (conf, cache) => {
       },
       publish: async (txData) => {
         // TODO: auto re-publish if no peers were online
-        const encoded = await TX.encode(txData)
-        await prom(cb => node.pubsub.publish('arswarm', encoded, cb))
+        await prom(cb => node.pubsub.publish('arswarm', encode(txData), cb))
       },
       fetch: async (id) => {
         return (await mesh.cmd.fetch.multicast({ successMax: 1, parallel: 5 }, id)) // this also validates

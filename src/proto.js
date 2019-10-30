@@ -29,19 +29,23 @@ message FetchRes {
 }
 
 message Tag {
-
+  bytes name = 1;
+  bytes value = 2;
 }
 
 message TX {
-  string id = 1;
-  string last_tx = 2;
+  bytes id = 1;
+  bytes last_tx = 2;
   string owner = 3;
+
   repeated Tag tags = 4;
+
   string target = 5;
   string quantity = 6;
-  string data = 7;
+
+  bytes data = 7;
   string reward = 8;
-  string signature = 9;
+  bytes signature = 9;
 }
 
 `)
