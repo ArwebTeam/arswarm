@@ -1,14 +1,11 @@
+
+# custom
+
+##
+
 # node
 
 node_modules
+yarn-error.log
 package-lock.json
 yarn.lock
-yarn-error.log
-generated.js
-old/
-
-# parcel
-
-dist
-.cache
-.parcel-cache

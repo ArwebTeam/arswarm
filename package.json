@@ -1,10 +1,16 @@
 {
   "name": "arswarm",
+  "template": {
+    "extends": [
+      "node"
+    ]
+  },
   "version": "0.1.5",
   "description": "Arswarm is a transaction and change caching/broadcasting layer",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha -A",
+    "cov": "nyc mocha"
   },
   "keywords": [
     "arweave",
@@ -26,13 +32,17 @@
     "libp2p-gossipsub": "^0.0.5",
     "libp2p-kad-dht": "^0.16.0",
     "libp2p-mesh-rpc": "^0.1.3",
-    "libp2p-mplex": "^0.8.5",
-    "libp2p-pnet": "^0.1.0",
+    "libp2p-mplex": "^0.8.x",
     "libp2p-secio": "^0.11.1",
     "libp2p-spdy": "^0.13.3",
     "libp2p-stardust": "^0.1.2",
-    "libp2p-websockets": "^0.12.4",
+    "libp2p-websockets": "^0.12.x",
+    "mkgs-tool": "^0.1.3",
     "peer-id": "^0.12.5",
     "uplex": "^0.0.4"
+  },
+  "devDependencies": {
+    "mocha": "*",
+    "nyc": "*"
   }
 }
