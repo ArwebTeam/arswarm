@@ -5,7 +5,7 @@
       "node"
     ]
   },
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Arswarm is a transaction and change caching/broadcasting layer",
   "main": "src/index.js",
   "scripts": {
