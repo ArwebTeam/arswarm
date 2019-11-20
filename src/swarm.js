@@ -111,6 +111,8 @@ module.exports = async (conf, cache) => {
     }
   })
 
+  await prom(cb => node.start(cb)) // TODO: possibly move this somewhere else, so it doesn't crash the SW if it fails
+
   await prom(cb => node.pubsub.subscribe(
     'arswarm', // IDEA: possibly split up networks by app-id
     async (msg) => {

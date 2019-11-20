@@ -4,7 +4,7 @@ const Arweave = require('arweave/web').default
 const ArweaveUtils = require('arweave/web/lib/utils')
 
 const x = require('base-x')
-const id = x('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-')
+const ID = x('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-')
 
 module.exports = (TX) => {
   const arweave = Arweave.init({})
@@ -35,11 +35,11 @@ module.exports = (TX) => {
     const o = {}
 
     if (id) {
-      o.id = id.encode(id)
+      o.id = ID.encode(id)
     }
 
     if (lastTx) {
-      o.last_tx = id.encode(lastTx)
+      o.last_tx = ID.encode(lastTx)
     }
 
     if (owner) {
@@ -47,8 +47,8 @@ module.exports = (TX) => {
     }
 
     o.tags = tags.map(({ name, value }) => ({
-      name: ArweaveUtils.bufferToB64Url(new Uint8Array(name)),
-      value: ArweaveUtils.bufferToB64Url(new Uint8Array(value))
+      name: ArweaveUtils.bufferTob64Url(new Uint8Array(name)),
+      value: ArweaveUtils.bufferTob64Url(new Uint8Array(value))
     }))
 
     if (quantity) {
@@ -60,7 +60,7 @@ module.exports = (TX) => {
     }
 
     if (data) {
-      o.data = ArweaveUtils.bufferToB64Url(new Uint8Array(data))
+      o.data = ArweaveUtils.bufferTob64Url(new Uint8Array(data))
     }
 
     if (reward) {
@@ -68,7 +68,7 @@ module.exports = (TX) => {
     }
 
     if (signature) {
-      o.signature = ArweaveUtils.bufferToB64Url(new Uint8Array(signature))
+      o.signature = ArweaveUtils.bufferTob64Url(new Uint8Array(signature))
     }
 
     return o
@@ -80,8 +80,8 @@ module.exports = (TX) => {
     }
 
     return TX.encode({
-      id: tx.id ? id.decode(tx.id) : null,
-      last_tx: tx.last_tx ? id.decode(tx.last_tx) : null,
+      id: tx.id ? ID.decode(tx.id) : null,
+      last_tx: tx.last_tx ? ID.decode(tx.last_tx) : null,
       owner: tx.owner, // TODO: encode this as well
       tags: tx.tags.map(({ name, value }) => ({
         name: Buffer.from(ArweaveUtils.b64UrlToBuffer(name)),

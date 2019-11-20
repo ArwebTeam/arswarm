@@ -50,7 +50,7 @@ module.exports = async ({ }) => {
         const key = tag.get('name')
         const value = tag.get('value')
 
-        dbtx.delete(`${id}#${key}#${value}`)
+        dbtx.store.delete(`${id}#${key}#${value}`)
       })
       await dbtx.done
 

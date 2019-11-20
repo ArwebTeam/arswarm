@@ -136,7 +136,5 @@ module.exports = async ({ listen, id, bootstrap }, cache) => {
     }
   })
 
-  await prom(cb => node.start(cb)) // TODO: possibly move this somewhere else, so it doesn't crash the SW if it fails
-
   return node
 }
